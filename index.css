@@ -24,6 +24,14 @@ input {
   width: 50px;
 }
 
+div {
+  display: inline-block;
+}
+
+.button {
+  width: 200px;
+}
+
 .success {
   font-size: 20px;
   color: green;
@@ -35,12 +43,13 @@ input {
 }
 
 .status {
-  display: inline-block;
+  color: grey;
 }
 
 #result-info {
-  text-align: center;
+  padding: 20px;
   color: #0f36e2;
+  display: block;
 }
 
 .title {

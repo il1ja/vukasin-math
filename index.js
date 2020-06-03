@@ -10,10 +10,19 @@ let start = function() {
   for (let i = 1; i <= noOfQuestions; i++) {
     $(document).on('blur', `#answer${i}`, function(event) {
       checkAnswer(i);
-    });
+      checkAnswers();
+    });    
   }
+  $('#restart').on('click', function(event) {
+    restart();
+  });
   generateQuestions();
-  $('#math-form').append(`<br /><br /><input type="submit" name="submit" value="Pošalji" />`);
+}
+
+let restart = function() {
+  $('#math-form').html('');
+  $('#result-info').html('');
+  generateQuestions();
 }
 
 let generateQuestions = function() {
@@ -37,15 +46,28 @@ let generateQuestions = function() {
 
 let questionTemplate = function(x, y, result, operation, i) {
   return `
-    <div id="question-${i}" class="status">
+    <div id="question-${i}">
       <input type="hidden" name="x${i}" id="x${i}" value="${x}" />${x}
       ${operation}
       <input type="hidden" name="y${i}" id="y${i}" value="${y}" />${y}
       = <input name="answer${i}" id="answer${i}" type="number"" />
       <input type="hidden" name="result${i}" id="result${i}" value="${result}" />
     </div>
-    <div id="status-${i}" class="status"></div>
+    <div id="status-${i}" class="status">${breakDown(x, y, operation)}</div>
   `;
+}
+
+let breakDown = function(x, y, operation) {
+  if (!['+', '-'].includes(operation) || limit > 100) {
+    return '';
+  }
+  let x2 = x % 10;
+  let x1 = x - x2;
+  let y2 = y % 10;
+  let y1 = y - y2;
+  let breakDown = `${x1} ${operation} ${y1} + ${x2} ${operation} ${y2}`
+
+  return breakDown;
 }
 
 let checkAnswers = function() {
@@ -68,6 +90,7 @@ let checkAnswer = function(i) {
     return;
   } else {
     $(`#answer${i}`).prop( "disabled", true );
+    status.removeClass('status');
     if (answer === result) {
       status.html('Tačno');
       status.addClass('success');
