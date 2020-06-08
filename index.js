@@ -11,10 +11,13 @@ let start = function() {
     $(document).on('blur', `#answer${i}`, function(event) {
       checkAnswer(i);
       checkAnswers();
-    });    
+    });
   }
   $('#restart').on('click', function(event) {
     restart();
+  });
+  $('#help').on('click', function(event) {
+    showHelp();
   });
   generateQuestions();
 }
@@ -22,6 +25,7 @@ let start = function() {
 let restart = function() {
   $('#math-form').html('');
   $('#result-info').html('');
+  $('#restart').addClass('hidden');
   generateQuestions();
 }
 
@@ -42,23 +46,37 @@ let generateQuestions = function() {
       }
     }
   }
+  showHelp();
 }
 
 let questionTemplate = function(x, y, result, operation, i) {
   return `
     <div id="question-${i}">
-      <input type="hidden" name="x${i}" id="x${i}" value="${x}" />${x}
-      ${operation}
-      <input type="hidden" name="y${i}" id="y${i}" value="${y}" />${y}
+      <input type="hidden" name="x${i}" id="x${i}" value="${x}" />
+      <input type="hidden" name="y${i}" id="y${i}" value="${y}" />
+      <input type="hidden" name="operation${i}" id="operation${i}" value="${operation}" />
+      <label for="answer${i}">${x} ${operation} ${y}</label>
       = <input name="answer${i}" id="answer${i}" type="number"" />
       <input type="hidden" name="result${i}" id="result${i}" value="${result}" />
     </div>
-    <div id="status-${i}" class="status">${breakDown(x, y, operation)}</div>
+    <div id="status-${i}" class="status"></div>
   `;
 }
 
+let showHelp = function() {
+  for (i = 1; i <= noOfQuestions; i++) {
+    if ($(`#answer${i}`).prop('disabled') == false) {
+      let x = $(`#x${i}`).val();
+      let y = $(`#y${i}`).val();
+      let operation = $(`#operation${i}`).val();
+      $(`#status-${i}`).html(breakDown(x, y, operation));
+    }
+  }
+}
+
+
 let breakDown = function(x, y, operation) {
-  if (!['+', '-'].includes(operation) || limit > 100) {
+  if (($('#help').prop("checked") == false) || !['+', '-'].includes(operation) || (limit > 100)) {
     return '';
   }
   let x2 = x % 10;
@@ -72,14 +90,21 @@ let breakDown = function(x, y, operation) {
 
 let checkAnswers = function() {
   let correct = 0;
+  let total = 0;
   for (i = 1; i <= noOfQuestions; i++) {
     let answer = $(`#answer${i}`).val();
     let result = $(`#result${i}`).val();
     if (answer === result) {
-      correct +=1;
+      correct ++;
+    }
+    if (answer != '') {
+      total ++;
     }
   }
-  $('#result-info').html(`Tačno ${correct} od ${noOfQuestions}`);
+  $('#result-info').html(`Tačno ${correct} od ${total}`);
+  if (total == noOfQuestions) {
+    $('#restart').removeClass('hidden');
+  }
 }
 
 let checkAnswer = function(i) {
