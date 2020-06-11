@@ -56,7 +56,7 @@ let questionTemplate = function(x, y, result, operation, i) {
       <input type="hidden" name="y${i}" id="y${i}" value="${y}" />
       <input type="hidden" name="operation${i}" id="operation${i}" value="${operation}" />
       <label for="answer${i}">${x} ${operation} ${y}</label>
-      = <input name="answer${i}" id="answer${i}" type="number"" />
+      = <input name="answer${i}" id="answer${i}" type="number" min="0" max="100" />
       <input type="hidden" name="result${i}" id="result${i}" value="${result}" />
     </div>
     <div id="status-${i}" class="status"></div>
